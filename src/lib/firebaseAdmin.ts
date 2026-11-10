@@ -1,11 +1,15 @@
 // src/lib/firebaseAdmin.ts
 import admin from "firebase-admin";
-import path from "path";
 
 if (!admin.apps.length) {
-  const serviceAccountPath = path.join(process.cwd(), 'src', 'lib', 'the-grok-ntf-firebase-adminsdk-fbsvc-69f2552061.json');
+  const rawServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  if (!rawServiceAccount) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not configured");
+  }
+
+  const serviceAccount = JSON.parse(rawServiceAccount);
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountPath), // Path to your service account key
+    credential: admin.credential.cert(serviceAccount),
   });
 }
 
